@@ -14,9 +14,8 @@ export function App() {
     null
   );
 
-  const [listQueryStatus, setListQueryStatus] = useState<
-    'loading' | 'success' | 'error' | 'idle'
-  >('idle');
+  const [listQueryStatus, setListQueryStatus] = useState<'loading' | 'success' | 'error' | 'idle'>('idle');
+  const [detailQueryStatus, setDetailQueryStatus] = useState<'loading' | 'success' | 'error' | 'idle'>('idle');
 
   // const selectedTrack = tracks.find((t) => selectedTrackIds.includes(t.id))
 
@@ -44,6 +43,7 @@ export function App() {
         }
         return prev.filter((id) => id !== trackId); // если уже выбран — убираем
       } else {
+        setDetailQueryStatus('loading')
         fetch(
           'https://musicfun.it-incubator.app/api/1.0/playlists/tracks/' +
             trackId,
@@ -57,6 +57,7 @@ export function App() {
           .then((data) => {
             // console.log(data);
             setSelectedTrack(data);
+            setDetailQueryStatus('success')
           });
         return [...prev, trackId]; // иначе добавляем
       }
@@ -90,7 +91,8 @@ export function App() {
         </ul>
         <div>
           <h2>Detail</h2>
-          {selectedTrack && selectedTrackIds.includes(selectedTrack.data.id) && (
+          {detailQueryStatus === 'loading' && <p>Loading...</p>}
+          {detailQueryStatus === 'success' && selectedTrack && selectedTrackIds.includes(selectedTrack.data.id) && (
             <div>
               <h3>{selectedTrack.data.attributes.title}</h3>
               <p>{selectedTrack.data.attributes.addedAt}</p>
