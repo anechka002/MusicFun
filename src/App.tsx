@@ -7,15 +7,14 @@ import type {
 
 export function App() {
   const [tracks, setTracks] = useState<TrackDataItem[]>([]);
-  const [selectedTrackIds, setSelectedTrackIds] = useState<string[]>([]);
-
+  const [listQueryStatus, setListQueryStatus] = useState<'loading' | 'success' | 'error' | 'idle'>('idle');
+  
   const [selectedTrack, setSelectedTrack] = useState<TrackResponse | null>(
     null
   );
-
-  const [listQueryStatus, setListQueryStatus] = useState<'loading' | 'success' | 'error' | 'idle'>('idle');
   const [detailQueryStatus, setDetailQueryStatus] = useState<'loading' | 'success' | 'error' | 'idle'>('idle');
 
+  const [selectedTrackIds, setSelectedTrackIds] = useState<string[]>([]);
   const abortControllerRef = useRef<null | AbortController>(null)
 
   useEffect(() => {
@@ -80,7 +79,7 @@ export function App() {
 
         <ul>
           <h2>List</h2>
-          {tracks.map((track, index) => {
+          {listQueryStatus === 'success' && tracks!.map((track, index) => {
             const color = selectedTrackIds.includes(track.id) ? 'red' : 'white';
             return (
               <li key={index} style={{ color: color }}>
