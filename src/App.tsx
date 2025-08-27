@@ -7,7 +7,6 @@ import type {
 
 export function App() {
   const [tracks, setTracks] = useState<TrackDataItem[]>([]);
-  // const [selectedTrackId, setSelectedTrackId] = useState<string | null>(null);
   const [selectedTrackIds, setSelectedTrackIds] = useState<string[]>([]);
 
   const [selectedTrack, setSelectedTrack] = useState<TrackResponse | null>(
@@ -16,8 +15,6 @@ export function App() {
 
   const [listQueryStatus, setListQueryStatus] = useState<'loading' | 'success' | 'error' | 'idle'>('idle');
   const [detailQueryStatus, setDetailQueryStatus] = useState<'loading' | 'success' | 'error' | 'idle'>('idle');
-
-  // const selectedTrack = tracks.find((t) => selectedTrackIds.includes(t.id))
 
   useEffect(() => {
     setListQueryStatus('loading');
@@ -35,7 +32,6 @@ export function App() {
   }, []);
 
   const handleSelectedTrackClick = (trackId: string) => {
-    // setSelectedTrackId(trackId)
     setSelectedTrackIds((prev) => {
       if (prev.includes(trackId)) {
         if(selectedTrack?.data.id === trackId) {
@@ -74,7 +70,6 @@ export function App() {
         <ul>
           <h2>List</h2>
           {tracks.map((track, index) => {
-            // const color = {color: track.id === selectedTrackId ? 'red' : 'white'}
             const color = selectedTrackIds.includes(track.id) ? 'red' : 'white';
             return (
               <li key={index} style={{ color: color }}>
