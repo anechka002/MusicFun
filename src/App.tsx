@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type {
   TrackDataItem,
   TrackResponse,
@@ -16,6 +16,8 @@ export function App() {
   const [listQueryStatus, setListQueryStatus] = useState<'loading' | 'success' | 'error' | 'idle'>('idle');
   const [detailQueryStatus, setDetailQueryStatus] = useState<'loading' | 'success' | 'error' | 'idle'>('idle');
 
+  const abortControllerRef = useRef<null | AbortController>(null)
+
   useEffect(() => {
     setListQueryStatus('loading');
     fetch('https://musicfun.it-incubator.app/api/1.0/playlists/tracks', {
@@ -32,7 +34,14 @@ export function App() {
   }, []);
 
   const handleSelectedTrackClick = (trackId: string) => {
+    
     setSelectedTrackIds((prev) => {
+
+      // Отменяем предыдущий запрос
+      abortControllerRef.current?.abort()
+      // Создаём новый AbortController для нового запроса
+      abortControllerRef.current = new AbortController()
+
       if (prev.includes(trackId)) {
         if(selectedTrack?.data.id === trackId) {
           setSelectedTrack(null)
@@ -40,10 +49,12 @@ export function App() {
         return prev.filter((id) => id !== trackId); // если уже выбран — убираем
       } else {
         setDetailQueryStatus('loading')
+
         fetch(
           'https://musicfun.it-incubator.app/api/1.0/playlists/tracks/' +
             trackId,
           {
+            signal: abortControllerRef.current.signal,
             headers: {
               'API-KEY': '2379558b-0188-43ee-9a39-5ee90ce1492e',
             },
