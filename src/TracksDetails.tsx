@@ -1,5 +1,6 @@
 import {useEffect, useRef, useState} from 'react';
 import type {TrackResponse} from './types/types';
+import {api} from "@/api.ts";
 
 type Props = {
   trackIds: string[];
@@ -32,16 +33,7 @@ export const TracksDetail = ({trackIds}: Props) => {
 
     setDetailQueryStatus('loading');
 
-    fetch(
-      `https://musicfun.it-incubator.app/api/1.0/playlists/tracks/${lastTrackId}`,
-      {
-        headers: {
-          'API-KEY': '2379558b-0188-43ee-9a39-5ee90ce1492e',
-        },
-        signal: abortControllerRef.current.signal
-      }
-    )
-      .then((res) => res.json() as Promise<TrackResponse>)
+    api.getTrack(lastTrackId, abortControllerRef.current.signal)
       .then((data) => {
         // console.log(data);
         setTrack(data);

@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react';
 import {Track} from './Track.tsx';
-import type {TrackDataItem, TracksResponse} from './types/types';
+import type {TrackDataItem} from './types/types';
+import {api} from "@/api.ts";
 
 type Props = {
   onTrackSelect: (trackId: string) => void;
@@ -13,12 +14,8 @@ export const TracksList = ({onTrackSelect, selectedTrackIds}: Props) => {
 
   useEffect(() => {
     setListQueryStatus('loading');
-    fetch('https://musicfun.it-incubator.app/api/1.0/playlists/tracks', {
-      headers: {
-        'API-KEY': '2379558b-0188-43ee-9a39-5ee90ce1492e',
-      },
-    })
-      .then((res) => res.json() as Promise<TracksResponse>)
+
+    api.getTracks()
       .then((data) => {
         // console.log(data);
         setTracks(data.data);
