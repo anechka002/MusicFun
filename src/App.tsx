@@ -1,4 +1,4 @@
-import {TracksDetail} from './TracksDetails';
+import {TrackDetail} from './TrackDetails.tsx';
 import {TracksList} from './TracksList';
 import {useState} from "react";
 
@@ -23,7 +23,7 @@ export const App = () => {
           selectedTrackIds={selectedTrackIds}
           onTrackSelect={handleOnTrackSelect}
         />
-        <TracksDetail trackIds={selectedTrackIds} />
+        <TrackDetail trackIds={selectedTrackIds} />
       </div>
     </div>
   );
