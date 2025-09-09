@@ -1,22 +1,30 @@
 import {Track} from './Track.tsx';
-import {useTracksList} from "@/hooks/useTracksList.ts";
+import {useQuery} from "@/hooks/useQuery.ts";
+import {api} from "@/api.ts";
 
 type Props = {
   onTrackSelect: (trackId: string) => void;
   selectedTrackIds: string[];
-};
+}
 
 export const TracksList = ({onTrackSelect, selectedTrackIds}: Props) => {
 
-  const {listQueryStatus, tracks} = useTracksList()
+  // const {listQueryStatus, tracks} = useTracksList()
 
-  if (listQueryStatus === 'loading') {
+  const {status, data: tracks} = useQuery({
+    queryKeys: ['tracks'],
+    queryFn: () =>  {
+      return api.getTracks()
+    }
+  })
+
+  if (status === 'loading') {
     return <div>Loading...</div>
   }
 
   return (
     <ul>
-      {tracks?.map((track) => (
+      {tracks?.data.map((track) => (
         <Track
           key={track.id}
           onSelect={onTrackSelect}
