@@ -1,6 +1,6 @@
 import {Track} from './Track.tsx';
-import {api} from "@/api.ts";
 import {useQuery} from "@tanstack/react-query";
+import {client} from "@/shared/api/client.ts";
 
 type Props = {
   onTrackSelect: (trackId: string) => void;
@@ -11,8 +11,9 @@ export const TracksList = ({onTrackSelect, selectedTrackIds}: Props) => {
 
   const {isPending, isError, data: tracks} = useQuery({
     queryKey: ['tracksList'],
-    queryFn: () =>  {
-      return api.getTracks()
+    queryFn: async () =>  {
+      const clientData = await client.GET('/playlists/tracks');
+      return clientData.data!
     }
   })
 
