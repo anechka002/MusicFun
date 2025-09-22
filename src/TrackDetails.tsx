@@ -1,5 +1,5 @@
-import {useQuery} from "@/hooks/useQuery.ts";
 import {api} from "@/api.ts";
+import {keepPreviousData, useQuery} from "@tanstack/react-query";
 
 type Props = {
   trackIds: string[];
@@ -11,29 +11,33 @@ export const TrackDetail = ({trackIds}: Props) => {
 
   const lastTrackId = trackIds[trackIds.length - 1];
 
-  const {status, data: track} = useQuery({
-    queryKeys: ['track', lastTrackId], // обязательно включаем ID
-    queryFn: ({signal}) =>  {
+  const {data: track, isPending,  isError, isFetching} = useQuery({
+    queryKey: ['trackDetail', lastTrackId], // обязательно включаем ID
+    queryFn: ({signal}) => {
       return api.getTrack(lastTrackId, signal)
     },
-    enabled: Boolean(lastTrackId) // запрос только если есть трек
+    enabled: Boolean(lastTrackId), // запрос только если есть трек
+    placeholderData: keepPreviousData, // временно показывай и сохраняй предыдущие данные
   })
+
+  if(!lastTrackId) return <p>no track selected</p>
+
+  if (isPending) {
+    return <p>Loading...</p>
+  }
+
+  if (isError) {
+    return <p>some error when fetch track</p>
+  }
 
   return (
     <div>
-      <h2>Detail</h2>
+      <h2>Detail {isFetching && '⏳'}</h2>
       <div>
-        {status === 'pending' && <p>No tracks for display</p>}
-        {status === 'loading' && <p>Loading...</p>}
-        {status === 'success' &&
-          track && (
-            <div>
-              <h3>{track.data.attributes.title}</h3>
-              <p>{track.data.attributes.addedAt}</p>
-              <p>Likes: {track.data.attributes.likesCount}</p>
-              <p>Lyrics: {track.data.attributes.lyrics}</p>
-            </div>
-          )}
+        <h3>{track.data.attributes.title}</h3>
+        <p>{track.data.attributes.addedAt}</p>
+        <p>Likes: {track.data.attributes.likesCount}</p>
+        <p>Lyrics: {track.data.attributes.lyrics}</p>
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import {Track} from './Track.tsx';
-import {useQuery} from "@/hooks/useQuery.ts";
 import {api} from "@/api.ts";
+import {useQuery} from "@tanstack/react-query";
 
 type Props = {
   onTrackSelect: (trackId: string) => void;
@@ -9,22 +9,23 @@ type Props = {
 
 export const TracksList = ({onTrackSelect, selectedTrackIds}: Props) => {
 
-  // const {listQueryStatus, tracks} = useTracksList()
-
-  const {status, data: tracks} = useQuery({
-    queryKeys: ['tracks'],
+  const {isPending, isError, data: tracks} = useQuery({
+    queryKey: ['tracksList'],
     queryFn: () =>  {
       return api.getTracks()
     }
   })
 
-  if (status === 'loading') {
+  if (isPending) {
     return <div>Loading...</div>
+  }
+  if (isError) {
+    return <div>Can't load tracks</div>
   }
 
   return (
     <ul>
-      {tracks?.data.map((track) => (
+      {tracks.data.map((track) => (
         <Track
           key={track.id}
           onSelect={onTrackSelect}
