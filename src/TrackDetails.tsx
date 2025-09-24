@@ -33,7 +33,7 @@ export const TrackDetail = ({trackIds}: Props) => {
   }
 
   if (isError) {
-    return <p>some error when fetch track</p>
+    return <p>some error when fetch track!</p>
   }
 
   return (
