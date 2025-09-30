@@ -2,12 +2,7 @@ import {Track} from './Track.tsx';
 import {useQuery} from "@tanstack/react-query";
 import {client} from "@/shared/api/client.ts";
 
-type Props = {
-  onTrackSelect: (trackId: string) => void;
-  selectedTrackIds: string[];
-}
-
-export const TracksList = ({onTrackSelect, selectedTrackIds}: Props) => {
+export const TracksList = () => {
 
   const {isPending, isError, data: tracks} = useQuery({
     queryKey: ['tracksList'],
@@ -29,9 +24,7 @@ export const TracksList = ({onTrackSelect, selectedTrackIds}: Props) => {
       {tracks.data.map((track) => (
         <Track
           key={track.id}
-          onSelect={onTrackSelect}
           track={track}
-          isSelected={selectedTrackIds.includes(track.id)}
         />
       ))}
     </ul>

@@ -1,32 +1,29 @@
 import {keepPreviousData, useQuery} from "@tanstack/react-query";
 import {client} from "@/shared/api/client.ts";
+import {useParams} from "react-router";
 
-type Props = {
-  trackIds: string[];
-};
+export const TrackDetail = () => {
 
-export const TrackDetail = ({trackIds}: Props) => {
-
-  const lastTrackId = trackIds[trackIds.length - 1];
+  const {trackId} = useParams()
 
   const {data: track, isPending,  isError, isFetching} = useQuery({
-    queryKey: ['trackDetail', lastTrackId], // обязательно включаем ID
+    queryKey: ['trackDetail', trackId], // обязательно включаем ID
     queryFn: async({signal}) => {
       const clientData = await client.GET('/playlists/tracks/{trackId}', {
         params: {
           path: {
-            trackId: lastTrackId!
+            trackId: trackId!
           }
         },
         signal: signal
-      }) //api.getTrack(lastTrackId, signal)
+      })
       return clientData.data;
     },
-    enabled: Boolean(lastTrackId), // запрос только если есть трек
+    enabled: Boolean(trackId), // запрос только если есть трек
     placeholderData: keepPreviousData, // временно показывай и сохраняй предыдущие данные
   })
 
-  if(!lastTrackId) return <p>no track selected</p>
+  if(!trackId) return <p>no track selected</p>
 
   if (isPending) {
     return <p>Loading...</p>
