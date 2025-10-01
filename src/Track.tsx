@@ -3,9 +3,15 @@ import {NavLink} from "react-router";
 
 type Props = {
   track: SchemaTrackListItemOutput
+  onTrackEnded: (id: string) => void
+  setRef: (ref: HTMLAudioElement | null) => void
 }
 
-export const Track = ({track}: Props) => {
+export const Track = ({track, onTrackEnded, setRef}: Props) => {
+
+  const handleTrackEnded = () => {
+    onTrackEnded(track.id)
+  }
 
   return (
     <li key={track.id}>
@@ -17,6 +23,8 @@ export const Track = ({track}: Props) => {
       <audio
         src={track.attributes.attachments[0]!.url}
         controls={true}
+        onEnded={handleTrackEnded}
+        ref={(el) => setRef(el)}
       ></audio>
     </li>
   );
