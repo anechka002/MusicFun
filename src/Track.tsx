@@ -14,7 +14,7 @@ export const Track = ({track, onTrackEnded, setRef}: Props) => {
   }
 
   return (
-    <li key={track.id}>
+    <>
       <h5>
         <NavLink to={`/tracks/${track.id}`}>
           {track.attributes.title}
@@ -26,6 +26,6 @@ export const Track = ({track, onTrackEnded, setRef}: Props) => {
         onEnded={handleTrackEnded}
         ref={(el) => setRef(el)}
       ></audio>
-    </li>
+    </>
   );
 };
