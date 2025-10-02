@@ -1,7 +1,7 @@
 import {Track} from './Track.tsx';
 import {useQuery} from "@tanstack/react-query";
 import {client} from "@/shared/api/client.ts";
-import {useEffect, useRef, useState} from "react";
+import {useRef, useState} from "react";
 import s from './TraksList.module.css'
 
 export const TracksList = () => {
@@ -14,17 +14,11 @@ export const TracksList = () => {
     }
   })
 
-  const [, setCurrentTrackPlay] = useState<string | null>(null)
+  const [currentTrackPlay, setCurrentTrackPlay] = useState<string | null>(null)
+  console.log('currentTrackPlay', currentTrackPlay)
 
   const audioElementRef = useRef<Record<string, HTMLAudioElement | null>>({})
-
   const selectedTrackRef = useRef<HTMLLIElement | null>(null)
-  const [index, setIndex] = useState<number>(0)
-
-  useEffect(() => {
-    console.log(index)
-    selectedTrackRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-  }, [index])
 
   if (isPending) {
     return <div>Loading...</div>
@@ -34,33 +28,38 @@ export const TracksList = () => {
   }
 
   const handleTrackEnded = (id: string) => {
-    const endedIndex = tracks.data.findIndex((e) => e.id === id);
-    if (endedIndex !== -1) {
-      const nextTrack = tracks.data[endedIndex + 1];
-      if (!nextTrack) {
-        setCurrentTrackPlay(null)
-        return
-      }
-      setCurrentTrackPlay(nextTrack.id);
-      audioElementRef.current[nextTrack.id]!.play()
-    }
-  }
+    const endedIndex = tracks.data.findIndex((el) => el.id === id);
+    if (endedIndex === -1) return; // защита
 
-  const handleNext = () => {
-    if(index < tracks.data.length - 1) {
-      setIndex(index + 1)
-    } else {
-      setIndex(0)
+    // вычисляем следующий индекс (или -1, если дошли до конца)
+    const nextIndex = endedIndex + 1 < tracks.data.length ? endedIndex + 1 : -1;
+
+    if(nextIndex === -1) {
+      // последний трек
+      setCurrentTrackPlay(null);
+      return;
     }
+
+    const nextTrack = tracks.data[nextIndex];
+    if(!nextTrack) return;
+    setCurrentTrackPlay(nextTrack.id)
+
+    audioElementRef.current[nextTrack.id]?.play()
+    selectedTrackRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+
+    console.log("Переключились на:", nextTrack)
   }
 
   return (
     <>
-      <button onClick={handleNext}>Next</button>
       <ul>
-        {tracks.data.map((track, i) => (
-          <li className={index === i ? s.active : ''} key={track.id} ref={index === i ? selectedTrackRef : null}>
+        {tracks.data.map((track) => (
+          <li className={currentTrackPlay === track.id ? s.active : ''}
+              key={track.id}
+              ref={currentTrackPlay === track.id ? selectedTrackRef : null}
+          >
             <Track
+              onTrackPlay={() => setCurrentTrackPlay(track.id)}
               onTrackEnded={handleTrackEnded}
               track={track}
               setRef={(el) => {
