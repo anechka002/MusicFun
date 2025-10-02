@@ -14,10 +14,13 @@ export const TracksList = () => {
     }
   })
 
+  // Хранит ID текущего проигрываемого трека
   const [currentTrackPlay, setCurrentTrackPlay] = useState<string | null>(null)
   console.log('currentTrackPlay', currentTrackPlay)
 
+  // useRef для хранения ссылок на элементы <audio>, чтобы управлять ими напрямую
   const audioElementRef = useRef<Record<string, HTMLAudioElement | null>>({})
+  // useRef для скролла к текущему треку
   const selectedTrackRef = useRef<HTMLLIElement | null>(null)
 
   if (isPending) {
@@ -27,6 +30,7 @@ export const TracksList = () => {
     return <div>Can't load tracks</div>
   }
 
+  // Автоплей следующего трека после окончания текущего
   const handleTrackEnded = (id: string) => {
     const endedIndex = tracks.data.findIndex((el) => el.id === id);
     if (endedIndex === -1) return; // защита
@@ -35,20 +39,46 @@ export const TracksList = () => {
     const nextIndex = endedIndex + 1 < tracks.data.length ? endedIndex + 1 : -1;
 
     if(nextIndex === -1) {
-      // последний трек
+      // Если дошли до конца -> останавливаем воспроизведение
       setCurrentTrackPlay(null);
       return;
     }
 
     const nextTrack = tracks.data[nextIndex];
     if(!nextTrack) return;
+
+    // ставим на паузу старый
+    audioElementRef.current[id]?.pause();
+
+    // обновляем state
     setCurrentTrackPlay(nextTrack.id)
 
+    // запускаем новый трек в состояние Play
     audioElementRef.current[nextTrack.id]?.play()
+    // скроллим к нему
     selectedTrackRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
 
     console.log("Переключились на:", nextTrack)
   }
+
+  // При старте Play через нативный контрол
+  const handleTrackPlay = (id: string) => {
+    // если играет другой трек → ставим его на паузу
+    if (currentTrackPlay && currentTrackPlay !== id) {
+      audioElementRef.current[currentTrackPlay]?.pause();
+    }
+    setCurrentTrackPlay(id);
+
+    // скроллим к текущему треку
+    selectedTrackRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  };
+
+  // При Pause через нативный контрол
+  const handleTrackPause = (id: string) => {
+    if (currentTrackPlay === id) {
+      setCurrentTrackPlay(null);
+    }
+  };
 
   return (
     <>
@@ -59,7 +89,8 @@ export const TracksList = () => {
               ref={currentTrackPlay === track.id ? selectedTrackRef : null}
           >
             <Track
-              onTrackPlay={() => setCurrentTrackPlay(track.id)}
+              onTrackPlay={() => handleTrackPlay(track.id)}
+              onTrackPause={() => handleTrackPause(track.id)}
               onTrackEnded={handleTrackEnded}
               track={track}
               setRef={(el) => {

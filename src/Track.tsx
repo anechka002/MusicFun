@@ -5,17 +5,14 @@ type Props = {
   track: SchemaTrackListItemOutput
   onTrackEnded: (id: string) => void
   onTrackPlay: (id: string) => void
+  onTrackPause: (id: string) => void
   setRef: (ref: HTMLAudioElement | null) => void
 }
 
-export const Track = ({track, onTrackEnded, onTrackPlay, setRef}: Props) => {
+export const Track = ({track, onTrackEnded, onTrackPlay, setRef, onTrackPause}: Props) => {
 
   const handleTrackEnded = () => {
     onTrackEnded(track.id)
-  }
-
-  const handleTrackPlay = () => {
-    onTrackPlay(track.id)
   }
 
   return (
@@ -30,7 +27,8 @@ export const Track = ({track, onTrackEnded, onTrackPlay, setRef}: Props) => {
         controls={true}
         onEnded={handleTrackEnded}
         ref={(el) => setRef(el)}
-        onPlay={handleTrackPlay}
+        onPlay={() => onTrackPlay(track.id)}
+        onPause={() => onTrackPause(track.id)}
       ></audio>
     </>
   );
