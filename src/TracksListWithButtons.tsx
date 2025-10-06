@@ -1,7 +1,6 @@
-// import {Track} from './Track.tsx';
 import {useQuery} from "@tanstack/react-query";
 import {client} from "@/shared/api/client.ts";
-import {useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import s from './TraksList.module.css'
 
 export const TracksListWithButtons = () => {
@@ -16,22 +15,17 @@ export const TracksListWithButtons = () => {
 
   // Хранит ID текущего проигрываемого трека
   const [currentTrackPlay, setCurrentTrackPlay] = useState<string | null>(null)
-  console.log('currentTrackPlay', currentTrackPlay)
-
-  // Хранит состояние Play/Pause каждого трека для кнопок и синхронизации
-  const [playState, setPlayState] = useState<Record<string, boolean>>({})
+  // состояние Play/Pause
+  const [isPlaying, setIsPlaying] = useState<boolean>(false)
 
   // useRef для хранения ссылок на элементы <audio>, чтобы управлять ими напрямую
   const audioElementRef = useRef<Record<string, HTMLAudioElement | null>>({})
   // useRef для скролла к текущему треку
   const selectedTrackRef = useRef<HTMLLIElement | null>(null)
 
-  if (isPending) {
-    return <div>Loading...</div>
-  }
-  if (isError) {
-    return <div>Can't load tracks</div>
-  }
+  if (isPending) return <div>Loading...</div>
+
+  if (isError) return <div>Can't load tracks</div>
 
   // Автоплей следующего трека после окончания текущего
   const handleTrackEnded = (id: string) => {
@@ -44,7 +38,7 @@ export const TracksListWithButtons = () => {
     if(nextIndex === -1) {
       // Если дошли до конца -> останавливаем воспроизведение
       setCurrentTrackPlay(null);
-      setPlayState(prev => ({...prev, [id]: false}))
+      setIsPlaying(false)
       return;
     }
 
@@ -53,42 +47,24 @@ export const TracksListWithButtons = () => {
 
     // Ставим следующий трек в состояние Play
     setCurrentTrackPlay(nextTrack.id)
-    setPlayState(prev => ({
-      ...prev,
-      [id]: false,          // ❗️ остановить прошлый
-      [nextTrack.id]: true  // ❗️ включить новый
-    }))
+    setIsPlaying(true)
 
     // Запускаем следующий трек через ссылку на <audio>
     audioElementRef.current[nextTrack.id]?.play()
     selectedTrackRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
 
-    console.log("Переключились на:", nextTrack)
+    // console.log("Переключились на:", nextTrack)
   }
 
-  // Функция переключения Play/Pause по клику на кнопку
-  const handleTogglePlay = (id: string) => {
-    // debugger
+  const handlePlayPause = (id: string) => {
     if(currentTrackPlay === id) {
-      // Если трек уже играет, ставим на паузу
-      audioElementRef.current[id]?.pause()
-      setPlayState((prev) => ({ ...prev, [id]: false })) // Обновляем состояние
-      setCurrentTrackPlay(null) // Останавливаем текущий трек
+      // если нажали на тот же трек → просто переключаем Play/Pause
+      setIsPlaying(prev => !prev)
     } else {
-      // Если другой трек играет, ставим его на паузу
-      // debugger
-      if(currentTrackPlay) {
-        // debugger
-        audioElementRef.current[currentTrackPlay]?.pause()
-        setPlayState((prev) => ({ ...prev, [currentTrackPlay]: false })) // Обновляем состояние
-      }
-      // Запускаем новый трек
+      // переключились на другой трек
       setCurrentTrackPlay(id)
-      setPlayState((prev) => ({ ...prev, [id]: true }))
-      audioElementRef.current[id]?.play()
+      setIsPlaying(true)
     }
-    // скроллим к нему
-    selectedTrackRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 
   return (
@@ -100,9 +76,9 @@ export const TracksListWithButtons = () => {
               ref={currentTrackPlay === track.id ? selectedTrackRef : null}
           >
             <Track
-              isPlaying={playState[track.id] ?? false}
-              // onTrackPlay={() => setCurrentTrackPlay(track.id)}
-              onTrackPlay={handleTogglePlay}
+              isPlaying={isPlaying}
+              isActive={currentTrackPlay === track.id}
+              onPlayPause={() => handlePlayPause(track.id)}
               onTrackEnded={handleTrackEnded}
               track={track}
               setRef={(el) => {
@@ -123,19 +99,31 @@ import {NavLink} from "react-router";
 type Props = {
   track: SchemaTrackListItemOutput
   onTrackEnded: (id: string) => void
-  onTrackPlay: (id: string) => void
+  onPlayPause: () => void
   setRef: (ref: HTMLAudioElement | null) => void
-  isPlaying: boolean
+  isActive: boolean // этот трек выбран?
+  isPlaying: boolean // играет или пауза?
 }
 
-export const Track = ({track, onTrackEnded, onTrackPlay, setRef, isPlaying, }: Props) => {
+export const Track = ({track, onTrackEnded, isPlaying, onPlayPause, isActive}: Props) => {
+  const ref = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    if(!ref.current) return;
+    if(isActive) {
+      if(isPlaying) {
+        ref.current?.play()
+      } else {
+        ref.current?.pause()
+      }
+    } else {
+      ref.current?.pause()
+      ref.current.currentTime = 0  // сбрасываем, если не активный
+    }
+  }, [isPlaying, isActive])
 
   const handleTrackEnded = () => {
     onTrackEnded(track.id)
-  }
-
-  const handleTrackPlay = () => {
-    onTrackPlay(track.id)
   }
 
   return (
@@ -149,10 +137,10 @@ export const Track = ({track, onTrackEnded, onTrackPlay, setRef, isPlaying, }: P
         src={track.attributes.attachments[0]!.url}
         controls={true}
         onEnded={handleTrackEnded}
-        ref={(el) => setRef(el)}
-        // onPlay={handleTrackPlay}
+        ref={ref}
+        autoPlay={isPlaying}
       ></audio>
-      <button onClick={handleTrackPlay}>{isPlaying ? 'Pause' : 'Play'}</button>
+      <button onClick={onPlayPause}>{isPlaying && isActive ? 'Pause' : 'Play'}</button>
     </>
   );
 };
