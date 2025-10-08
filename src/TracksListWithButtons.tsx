@@ -93,11 +93,11 @@ export const TracksListWithButtons = () => {
   );
 };
 
-import type {SchemaTrackListItemOutput} from "@/shared/api/schema";
+import type {SchemaTrackListItemResource} from "@/shared/api/schema";
 import {NavLink} from "react-router";
 
 type Props = {
-  track: SchemaTrackListItemOutput
+  track: SchemaTrackListItemResource
   onTrackEnded: (id: string) => void
   onPlayPause: () => void
   setRef: (ref: HTMLAudioElement | null) => void

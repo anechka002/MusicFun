@@ -1,8 +1,10 @@
-import type {SchemaTrackListItemOutput} from "@/shared/api/schema";
+// import type {SchemaTrackListItemOutput} from "@/shared/api/schema";
 import {NavLink} from "react-router";
+import type {SchemaTrackListItemResource} from "@/shared/api/schema";
 
 type Props = {
-  track: SchemaTrackListItemOutput
+  // track: SchemaTrackListItemOutput
+  track: SchemaTrackListItemResource
   onTrackEnded: (id: string) => void
   onTrackPlay: (id: string) => void
   onTrackPause: (id: string) => void

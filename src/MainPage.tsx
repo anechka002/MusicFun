@@ -1,5 +1,4 @@
 import {TracksList} from "@/TracksList.tsx";
-import {TracksListWithButtons} from "@/TracksListWithButtons.tsx";
 
 export const MainPage = () => {
 
@@ -8,7 +7,8 @@ export const MainPage = () => {
       <h2>Music Fun</h2>
       <div style={{display: 'flex', gap: '24px'}}>
         <TracksList />
-        <TracksListWithButtons/>
+        {/*<TracksListWithButtons/>*/}
+        {/*<TracksListPlayer/>*/}
       </div>
     </div>
   );
