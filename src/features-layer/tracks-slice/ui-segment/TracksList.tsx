@@ -8,7 +8,7 @@ import {
 type SortDirectionType =  "desc" | "asc" | undefined
 type SortByType =  "publishedAt"| "likesCount"
 
-// кастомный хук
+// 🧩 Кастомный хук для управления пагинацией
 const usePagination = () => {
   // 🔢 Номер текущей страницы (для пагинации)
   const [pageNumber, setPageNumber] = useState<number>(1);
@@ -18,9 +18,11 @@ const usePagination = () => {
   return {
     pageNumber,
     pageSize,
+    // Устанавливает новую страницу
     setPageNumber: (newPageNumber: number) => {
       setPageNumber(newPageNumber);
     },
+    // Меняет количество элементов на странице и сбрасывает страницу на первую
     setPageSize: (newPageSize: number) => {
       setPageSize(newPageSize);
       setPageNumber(1)
@@ -29,17 +31,17 @@ const usePagination = () => {
 }
 
 export const TracksList = () => {
-
+  console.log('TracksList')
   const {pageNumber, pageSize, setPageSize, setPageNumber} = usePagination()
 
   // ↕️ Направление сортировки (по убыванию/возрастанию)
   const [sortDirection, setSortDirection]= useState<SortDirectionType>('desc')
   // 🔤 Поле, по которому идёт сортировка (дата публикации или количество лайков)
   const [sortBy, setSortBy]= useState<SortByType>('publishedAt')
+  // 🔍 Поисковая строка
+  const [search, setSearch] = useState<string>('')
 
-  const [search, setSearch]= useState<string>('')
-
-  // Загружаем список треков через React Query
+  // 🔁 Загружаем список треков через React Query с параметрами пагинации и сортировки
   const {isPending, isError, data: tracks, isFetching} = useTracksQuery({
     pageNumber,
     pageSize,
@@ -55,8 +57,6 @@ export const TracksList = () => {
   const audioElementRef = useRef<Record<string, HTMLAudioElement | null>>({})
   // useRef для скролла к текущему треку
   const selectedTrackRef = useRef<HTMLLIElement | null>(null)
-
-  const searchInputRef = useRef<HTMLInputElement | null>(null)
 
   // Если данные ещё не пришли (первичная загрузка) — показываем "Loading..."
   if (isPending) {
@@ -148,13 +148,14 @@ export const TracksList = () => {
     setSortBy(e.currentTarget.value as SortByType)
   }
 
-  const handleSearchClick = () => {
-    setSearch(searchInputRef.current!.value)
+  // 🔍 Обработка нажатия кнопки "Search"
+  const handleSearchClick = (value: string) => {
+    setSearch(value)
   }
 
   return (
     <>
-      <input type="text" ref={searchInputRef} /><button onClick={handleSearchClick}>Search</button>
+      <Search onSearchClick={handleSearchClick}/>
       
       <hr/>
       
@@ -182,6 +183,7 @@ export const TracksList = () => {
                   onPageSelect={handlePageSelect}
                   isPageUpdating={isPageUpdating}
       />
+
       <ul style={{ opacity: isPageContentUnactual ? '0.4' : '1' }}>
         {tracks.data.map((track) => (
           <li className={currentTrackPlay === track.id ? s.active : ''}
@@ -205,6 +207,28 @@ export const TracksList = () => {
   );
 };
 
+type SearchProps = {
+  onSearchClick: (value: string) => void;
+}
+function Search ({ onSearchClick }: SearchProps) {
+  console.log('Search')
+  const [search, setSearch]= useState<string>('')
+
+  const handleSearchClick = () => {
+    onSearchClick(search)
+  }
+
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.currentTarget.value)
+  }
+
+  return (
+    <>
+      <input type="text" value={search} onChange={handleSearchChange} /><button onClick={handleSearchClick}>Search</button>
+    </>
+  )
+}
+
 
 type PaginationType = {
   limit: number;
@@ -213,7 +237,6 @@ type PaginationType = {
   onPageSelect: (pageNumber: number) => void;
   isPageUpdating: boolean;
 }
-
 function Pagination ({ limit, total, skip, onPageSelect, isPageUpdating }: PaginationType) {
   // Считаем количество страниц (всего)
   const totalPagesCount = Math.ceil(total / limit);
