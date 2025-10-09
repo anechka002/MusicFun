@@ -1,11 +1,11 @@
-import {TracksList} from "@/TracksList.tsx";
+import {TracksList} from "@/features-layer/tracks-slice/ui-segment/TracksList.tsx";
 
 export const MainPage = () => {
 
   return (
     <div>
       <h2>Music Fun</h2>
-      <div style={{display: 'flex', gap: '24px'}}>
+      <div>
         <TracksList />
         {/*<TracksListWithButtons/>*/}
         {/*<TracksListPlayer/>*/}
