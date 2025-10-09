@@ -8,11 +8,30 @@ import {
 type SortDirectionType =  "desc" | "asc" | undefined
 type SortByType =  "publishedAt"| "likesCount"
 
-export const TracksList = () => {
+// кастомный хук
+const usePagination = () => {
   // 🔢 Номер текущей страницы (для пагинации)
   const [pageNumber, setPageNumber] = useState<number>(1);
   // 📏 Количество треков на странице
   const [pageSize, setPageSize] = useState<number>(5);
+
+  return {
+    pageNumber,
+    pageSize,
+    setPageNumber: (newPageNumber: number) => {
+      setPageNumber(newPageNumber);
+    },
+    setPageSize: (newPageSize: number) => {
+      setPageSize(newPageSize);
+      setPageNumber(1)
+    },
+  }
+}
+
+export const TracksList = () => {
+
+  const {pageNumber, pageSize, setPageSize, setPageNumber} = usePagination()
+
   // ↕️ Направление сортировки (по убыванию/возрастанию)
   const [sortDirection, setSortDirection]= useState<SortDirectionType>('desc')
   // 🔤 Поле, по которому идёт сортировка (дата публикации или количество лайков)
@@ -23,7 +42,7 @@ export const TracksList = () => {
     pageNumber,
     pageSize,
     sortDirection,
-    sortBy
+    sortBy,
   })
 
   // Хранит ID текущего проигрываемого трека
@@ -112,7 +131,6 @@ export const TracksList = () => {
   // 🔢 Изменение количества элементов на странице
   const handlePageSizeChange = (e: ChangeEvent<HTMLSelectElement>) => {
     setPageSize(+e.currentTarget.value)
-    setPageNumber(1)
   }
 
   // ↕️ Изменение направления сортировки (asc / desc)
