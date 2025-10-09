@@ -5,6 +5,8 @@ import {
   useTracksQuery
 } from "@/features-layer/tracks-slice/model-segment/useTracksQuery.tsx";
 
+type SortDirectionType =  "desc" | "asc" | undefined
+
 export const TracksList = () => {
 
   // Номер текущей страницы (для пагинации)
@@ -12,10 +14,13 @@ export const TracksList = () => {
 
   const [pageSize, setPageSize] = useState(5);
 
+  const [sortDirection, setSortDirection]= useState<SortDirectionType>('desc')
+
   // Загружаем список треков через React Query
   const {isPending, isError, data: tracks, isFetching} = useTracksQuery({
     pageNumber,
     pageSize,
+    sortDirection
   })
 
   // Хранит ID текущего проигрываемого трека
@@ -104,6 +109,10 @@ export const TracksList = () => {
     setPageNumber(1)
   }
 
+  const handleSortDirectionChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    setSortDirection(e.currentTarget.value as SortDirectionType)
+  }
+
   return (
     <>
       <select value={pageSize} onChange={handlePageSizeChange}>
@@ -111,6 +120,12 @@ export const TracksList = () => {
         <option value="10">10 items</option>
         <option value="20">20 items</option>
       </select>
+
+      <select value={sortDirection} onChange={handleSortDirectionChange}>
+        <option value={'desc'}>desc</option>
+        <option value={'asc'}>asc</option>
+      </select>
+
       <Pagination total={tracks.meta.totalCount!}
                   skip={tracks.meta.pageSize * (pageNumber - 1)}
                   limit={tracks.meta.pageSize}
