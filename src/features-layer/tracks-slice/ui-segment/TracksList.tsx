@@ -37,12 +37,15 @@ export const TracksList = () => {
   // 🔤 Поле, по которому идёт сортировка (дата публикации или количество лайков)
   const [sortBy, setSortBy]= useState<SortByType>('publishedAt')
 
+  const [search, setSearch]= useState<string>('')
+
   // Загружаем список треков через React Query
   const {isPending, isError, data: tracks, isFetching} = useTracksQuery({
     pageNumber,
     pageSize,
     sortDirection,
     sortBy,
+    search,
   })
 
   // Хранит ID текущего проигрываемого трека
@@ -52,6 +55,8 @@ export const TracksList = () => {
   const audioElementRef = useRef<Record<string, HTMLAudioElement | null>>({})
   // useRef для скролла к текущему треку
   const selectedTrackRef = useRef<HTMLLIElement | null>(null)
+
+  const searchInputRef = useRef<HTMLInputElement | null>(null)
 
   // Если данные ещё не пришли (первичная загрузка) — показываем "Loading..."
   if (isPending) {
@@ -143,8 +148,16 @@ export const TracksList = () => {
     setSortBy(e.currentTarget.value as SortByType)
   }
 
+  const handleSearchClick = () => {
+    setSearch(searchInputRef.current!.value)
+  }
+
   return (
     <>
+      <input type="text" ref={searchInputRef} /><button onClick={handleSearchClick}>Search</button>
+      
+      <hr/>
+      
       <select value={pageSize} onChange={handlePageSizeChange}>
         <option value="5">5 items</option>
         <option value="10">10 items</option>
@@ -160,6 +173,8 @@ export const TracksList = () => {
         <option value={'publishedAt'}>publishedAt</option>
         <option value={'likesCount'}>likesCount</option>
       </select>
+
+      <hr/>
 
       <Pagination total={tracks.meta.totalCount!}
                   skip={tracks.meta.pageSize * (pageNumber - 1)}
