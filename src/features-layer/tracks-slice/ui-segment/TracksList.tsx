@@ -6,21 +6,24 @@ import {
 } from "@/features-layer/tracks-slice/model-segment/useTracksQuery.tsx";
 
 type SortDirectionType =  "desc" | "asc" | undefined
+type SortByType =  "publishedAt"| "likesCount"
 
 export const TracksList = () => {
-
-  // Номер текущей страницы (для пагинации)
-  const [pageNumber, setPageNumber] = useState(1);
-
-  const [pageSize, setPageSize] = useState(5);
-
+  // 🔢 Номер текущей страницы (для пагинации)
+  const [pageNumber, setPageNumber] = useState<number>(1);
+  // 📏 Количество треков на странице
+  const [pageSize, setPageSize] = useState<number>(5);
+  // ↕️ Направление сортировки (по убыванию/возрастанию)
   const [sortDirection, setSortDirection]= useState<SortDirectionType>('desc')
+  // 🔤 Поле, по которому идёт сортировка (дата публикации или количество лайков)
+  const [sortBy, setSortBy]= useState<SortByType>('publishedAt')
 
   // Загружаем список треков через React Query
   const {isPending, isError, data: tracks, isFetching} = useTracksQuery({
     pageNumber,
     pageSize,
-    sortDirection
+    sortDirection,
+    sortBy
   })
 
   // Хранит ID текущего проигрываемого трека
@@ -92,25 +95,34 @@ export const TracksList = () => {
     }
   };
 
-  // Меняем текущую страницу (номер)
+  // 📄 Изменение текущей страницы (при клике на номер страницы)
   const handlePageSelect = (pageNumber: number) => {
     setPageNumber(pageNumber)
   }
 
+  // ⚙️ Флаг: контент устарел (React Query обновляет данные)
   // true → контент устарел, идёт обновление (например, пользователь переключил страницу)
   // const isPageContentUnactual = tracks.meta.page !== pageNumber
   const isPageContentUnactual = isFetching && !isPending
 
+  // ⏳ Флаг: страница в процессе обновления (например, при смене страницы)
   // true → контент подгружается (для блокировки кнопок пагинации и визуальных эффектов)
   const isPageUpdating = isFetching && !isPending
 
+  // 🔢 Изменение количества элементов на странице
   const handlePageSizeChange = (e: ChangeEvent<HTMLSelectElement>) => {
     setPageSize(+e.currentTarget.value)
     setPageNumber(1)
   }
 
+  // ↕️ Изменение направления сортировки (asc / desc)
   const handleSortDirectionChange = (e: ChangeEvent<HTMLSelectElement>) => {
     setSortDirection(e.currentTarget.value as SortDirectionType)
+  }
+
+  // 🧭 Изменение поля сортировки (по дате / по лайкам)
+  const handleSortByChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    setSortBy(e.currentTarget.value as SortByType)
   }
 
   return (
@@ -124,6 +136,11 @@ export const TracksList = () => {
       <select value={sortDirection} onChange={handleSortDirectionChange}>
         <option value={'desc'}>desc</option>
         <option value={'asc'}>asc</option>
+      </select>
+
+      <select value={sortBy} onChange={handleSortByChange}>
+        <option value={'publishedAt'}>publishedAt</option>
+        <option value={'likesCount'}>likesCount</option>
       </select>
 
       <Pagination total={tracks.meta.totalCount!}
