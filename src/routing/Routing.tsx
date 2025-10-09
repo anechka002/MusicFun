@@ -4,8 +4,8 @@ import {CommonLayout} from "@/routing/layouts/CommonLayout.tsx";
 import {MainPage} from "@/MainPage.tsx";
 import {TrackDetail} from "@/TrackDetail.tsx";
 import {PageNotFound} from "@/components/pageNotFound/PageNotFound.tsx";
-import {Login} from "@/features/auth/ui/Login.tsx";
-import {Register} from "@/features/auth/ui/Register.tsx";
+import {Login} from "@/features-layer/auth-slice/ui/Login.tsx";
+import {Register} from "@/features-layer/auth-slice/ui/Register.tsx";
 
 export const PATH = {
   MAIN: "/",
