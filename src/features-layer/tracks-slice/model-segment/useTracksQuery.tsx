@@ -1,6 +1,6 @@
 import {keepPreviousData, useQuery} from "@tanstack/react-query";
-import {client} from "@/shared/api/client.ts";
-import type {SchemaGetTracksRequestPayload} from "@/shared/api/schema";
+import {client} from "@/shared-layer/api-segment/client.ts";
+import type {SchemaGetTracksRequestPayload} from "@/shared-layer/api-segment/schema";
 
 export function useTracksQuery(params: Partial<SchemaGetTracksRequestPayload>) {
   return useQuery({

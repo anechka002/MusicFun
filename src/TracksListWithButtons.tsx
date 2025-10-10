@@ -1,5 +1,5 @@
 import {useQuery} from "@tanstack/react-query";
-import {client} from "@/shared/api/client.ts";
+import {client} from "@/shared-layer/api-segment/client.ts";
 import {useEffect, useRef, useState} from "react";
 import s from './TraksList.module.css'
 
@@ -93,7 +93,7 @@ export const TracksListWithButtons = () => {
   );
 };
 
-import type {SchemaTrackListItemResource} from "@/shared/api/schema";
+import type {SchemaTrackListItemResource} from "@/shared-layer/api-segment/schema";
 import {NavLink} from "react-router";
 
 type Props = {

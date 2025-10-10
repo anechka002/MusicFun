@@ -1,5 +1,5 @@
 import createClient, {type Middleware} from "openapi-fetch";
-import type {paths} from "@/shared/api/schema";
+import type {paths} from "@/shared-layer/api-segment/schema";
 
 export const client = createClient<paths>({ baseUrl: "https://musicfun.it-incubator.app/api/1.0/" });
 
