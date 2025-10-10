@@ -157,7 +157,7 @@ export const TracksList = () => {
 
   return (
     <>
-      <Search onSearch={handleSearchClick} isSearchButtonVisible={false} mode={'debounce'}/>
+      <Search onSearch={handleSearchClick} isSearchButtonVisible={false} mode={'throttle'}/>
       
       <hr/>
       
