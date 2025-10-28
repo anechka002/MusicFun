@@ -1,10 +1,11 @@
 import {keepPreviousData, useQuery} from "@tanstack/react-query";
 import {client} from "@/shared-layer/api-segment/client.ts";
-import {useParams} from "react-router";
 
-export const TrackDetail = () => {
+type Props = {
+  trackId: string;
+}
 
-  const {trackId} = useParams()
+export const TrackDetail = ({trackId}: Props) => {
 
   const {data: track, isPending,  isError, isFetching} = useQuery({
     queryKey: ['trackDetail', trackId], // обязательно включаем ID
