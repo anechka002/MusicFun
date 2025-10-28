@@ -4,8 +4,11 @@ export const CommonLayout = () => {
   return (
     <div>
       <header>Layout from CommonLayout</header>
-        <Outlet/>
-      <footer>footer CommonLayout</footer>
+      <Outlet />
+      <footer>
+        <hr />
+        footer CommonLayout
+      </footer>
     </div>
   );
 };

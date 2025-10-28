@@ -1,11 +1,14 @@
 import {Route, Routes} from "react-router";
 import {AuthLayout} from "@/routing/layouts/AuthLayout.tsx";
 import {CommonLayout} from "@/routing/layouts/CommonLayout.tsx";
-import {MainPage} from "@/MainPage.tsx";
-import {TrackDetail} from "@/TrackDetail.tsx";
-import {PageNotFound} from "@/components/pageNotFound/PageNotFound.tsx";
-import {Login} from "@/features-layer/auth-slice/ui/Login.tsx";
-import {Register} from "@/features-layer/auth-slice/ui/Register.tsx";
+import {PageNotFound} from "@/pages-layer/pageNotFound/PageNotFound.tsx";
+import {LoginPage} from "@/pages-layer/loginPage/LoginPage.tsx";
+import {RegisterPage} from "@/pages-layer/registerPage/RegisterPage.tsx";
+import {ProfilePage} from "@/pages-layer/profilePage/ProfilePage.tsx";
+import {
+  TrackDetailPage
+} from "@/pages-layer/trackDetailPage/TrackDetailPage.tsx";
+import {TracksListPage} from "@/pages-layer/tracksListPage/TracksListPage.tsx";
 
 export const PATH = {
   MAIN: "/",
@@ -13,6 +16,7 @@ export const PATH = {
   LOGIN: "login",
   REGISTER: "register",
   TRACK_DETAIL: "tracks/:trackId",
+  PROFILE: "profile/:userId",
   NOTFOUND: '*',
 } as const
 
@@ -20,15 +24,16 @@ export const Routing = () => {
   return (
     <Routes>
       <Route element={<CommonLayout />}>
-        <Route path={PATH.MAIN} element={<MainPage/>}/>
-        <Route path={PATH.TRACK_DETAIL} element={<TrackDetail/>}/>
+        <Route path={PATH.MAIN} element={<TracksListPage/>}/>
+        <Route path={PATH.TRACK_DETAIL} element={<TrackDetailPage/>}/>
+        <Route path={PATH.PROFILE} element={<ProfilePage/>}/>
       </Route>
 
       <Route path={PATH.AUTH} element={<AuthLayout/>}>
         {/*<Route path={PATH.AUTH}>*/}
-        <Route path={PATH.LOGIN} element={<Login />} />
+        <Route path={PATH.LOGIN} element={<LoginPage />} />
         {/*<Route index element={<Login />} />*/}
-        <Route path={PATH.REGISTER} element={<Register />} />
+        <Route path={PATH.REGISTER} element={<RegisterPage />} />
       </Route>
 
       <Route path={PATH.NOTFOUND} element={<PageNotFound />} />

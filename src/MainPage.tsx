@@ -1,4 +1,4 @@
-import {TracksList} from "@/features-layer/tracks-slice/ui-segment/TracksList.tsx";
+import {TracksList} from "@/widgest-layer/tracks-slice/ui-segment/TracksList.tsx";
 
 export const MainPage = () => {
 

@@ -1,9 +1,7 @@
-// import type {SchemaTrackListItemOutput} from "@/shared/api/schema";
 import {NavLink} from "react-router";
 import type {SchemaTrackListItemResource} from "@/shared-layer/api-segment/schema";
 
 type Props = {
-  // track: SchemaTrackListItemOutput
   track: SchemaTrackListItemResource
   onTrackEnded: (id: string) => void
   onTrackPlay: (id: string) => void
@@ -32,6 +30,7 @@ export const Track = ({track, onTrackEnded, onTrackPlay, setRef, onTrackPause}: 
         onPlay={() => onTrackPlay(track.id)}
         onPause={() => onTrackPause(track.id)}
       ></audio>
+      {!track.attributes.isPublished && <span>no published</span>}
     </>
   );
 };
