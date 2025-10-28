@@ -1,5 +1,9 @@
 import {NavLink} from "react-router";
 import type {SchemaTrackListItemResource} from "@/shared-layer/api-segment/schema";
+import {
+  DeleteTrack
+} from "@/features-layer/tracks-slice/delete-track-feature/ui-segment/DeleteTrack.tsx";
+import {useMeQuery} from "@/features-layer/auth-slice/model/useMeQuery.tsx";
 
 type Props = {
   track: SchemaTrackListItemResource
@@ -10,10 +14,13 @@ type Props = {
 }
 
 export const Track = ({track, onTrackEnded, onTrackPlay, setRef, onTrackPause}: Props) => {
+  const {data} = useMeQuery()
 
   const handleTrackEnded = () => {
     onTrackEnded(track.id)
   }
+
+  const isOwner = data?.userId === track.attributes.user.id
 
   return (
     <>
@@ -31,6 +38,8 @@ export const Track = ({track, onTrackEnded, onTrackPlay, setRef, onTrackPause}: 
         onPause={() => onTrackPause(track.id)}
       ></audio>
       {!track.attributes.isPublished && <span>no published</span>}
+      {/*<DeleteTrack trackId={track.id} />*/}
+      {isOwner && <DeleteTrack trackId={track.id} />}
     </>
   );
 };
