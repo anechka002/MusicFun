@@ -1,7 +1,6 @@
 import {type SubmitHandler, useForm} from "react-hook-form";
 import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {useMeQuery} from "@/features-layer/auth-slice/model/useMeQuery.ts";
 import {useNavigate} from "react-router";
 import {
   useLoginMutation
@@ -15,8 +14,6 @@ type LoginFormInputs = z.infer<typeof schema>
 
 
 export const LoginPage = () => {
-
-  const {data} = useMeQuery()
 
   const {mutateAsync} = useLoginMutation()
 
@@ -40,20 +37,7 @@ export const LoginPage = () => {
         message: 'Incorrect login or password'
       })
     }
-
-    // mutate(inputs, {
-    //   onSuccess: (data) => {
-    //     navigate('/profile/' + data!.userId)
-    //   },
-    //   onError: () => {
-    //     setError('login', {
-    //       message: 'Incorrect login or password'
-    //     })
-    //   }
-    // })
   }
-
-  if (data) return <div>вы залогинены</div>
 
   return (
     <form onSubmit={handleSubmit(myHandleSubmit)}>
