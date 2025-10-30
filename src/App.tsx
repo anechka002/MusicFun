@@ -2,7 +2,7 @@ import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import {Header} from "@/components/header/Header.tsx";
 import {Routing} from "@/routing/Routing.tsx";
 
-// Создать клиента
+// Создаем клиента
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -17,7 +17,7 @@ window.__TANSTACK_QUERY_CLIENT__ = queryClient;
 
 export const App = () => {
   return (
-    // Предоставьте клиенту доступ к вашему App
+    // Даём его всему приложению
     <QueryClientProvider client={queryClient}>
       <Header/>
       <Routing/>

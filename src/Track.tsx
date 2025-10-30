@@ -3,7 +3,7 @@ import type {SchemaTrackListItemResource} from "@/shared-layer/api-segment/schem
 import {
   DeleteTrack
 } from "@/features-layer/tracks-slice/delete-track-feature/ui-segment/DeleteTrack.tsx";
-import {useMeQuery} from "@/features-layer/auth-slice/model/useMeQuery.tsx";
+import {useMeQuery} from "@/features-layer/auth-slice/model/useMeQuery.ts";
 
 type Props = {
   track: SchemaTrackListItemResource

@@ -39,7 +39,7 @@ export const TrackDetail = ({trackId}: Props) => {
       <h2>Detail {isFetching && '⏳'}</h2>
       <div>
         <h3>{track?.data.attributes.title}</h3>
-        <p>{track?.data.attributes.addedAt}</p>
+        <p>{track?.data.attributes.publishedAt && new Date(track.data.attributes.publishedAt).toLocaleString()}</p>
         <p>Likes: {track?.data.attributes.likesCount}</p>
         <p>Lyrics: {track?.data.attributes.lyrics}</p>
       </div>
