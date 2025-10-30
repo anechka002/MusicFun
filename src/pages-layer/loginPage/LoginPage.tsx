@@ -18,7 +18,7 @@ export const LoginPage = () => {
 
   const {data} = useMeQuery()
 
-  const {mutate} = useLoginMutation()
+  const {mutateAsync} = useLoginMutation()
 
   const navigate = useNavigate();
 
@@ -32,30 +32,25 @@ export const LoginPage = () => {
   })
 
   const myHandleSubmit: SubmitHandler<LoginFormInputs> = async (inputs) => {
-    mutate(inputs, {
-      onSuccess: (data) => {
-        navigate('/profile/' + data!.userId)
-      },
-      onError: () => {
-        setError('login', {
-          message: 'Incorrect login or password'
-        })
-      }
-    })
-    // storage.saveBasicCredentials(inputs.login, inputs.password)
-    // try {
-    //   const data = await refetch()
-    //   if(data.error) {
+    try {
+      const data = await mutateAsync(inputs)
+      navigate('/profile/' + data!.userId)
+    } catch {
+      setError('login', {
+        message: 'Incorrect login or password'
+      })
+    }
+
+    // mutate(inputs, {
+    //   onSuccess: (data) => {
+    //     navigate('/profile/' + data!.userId)
+    //   },
+    //   onError: () => {
     //     setError('login', {
     //       message: 'Incorrect login or password'
     //     })
-    //   } else {
-    //     navigate('/profile/' + data.data!.userId)
     //   }
-    // }
-    // catch (error) {
-    //   console.log(error)
-    // }
+    // })
   }
 
   if (data) return <div>вы залогинены</div>
