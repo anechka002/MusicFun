@@ -1,43 +1,65 @@
-import type {FormEvent} from "react";
 import {
   useUploadTrack
 } from "@/features-layer/tracks-slice/upload-track-feature/model-segment/useUploadTrack.ts";
+import {z} from "zod";
+import {type SubmitHandler, useForm} from "react-hook-form";
+import {zodResolver} from "@hookform/resolvers/zod";
+
+const schema = z.object({
+  title: z.string({message: 'Title is required'}).min(3),
+  file: z.any()
+  // file: z.instanceof(FileList).refine((files) => files.length > 0, { message: 'File is required' })
+})
+// type UploadTrackFormInputs = z.infer<typeof schema>
+type UploadTrackFormInputs = {
+  title: string
+  file: FileList
+}
 
 export const UploadTrackForm = () => {
 
-  const { mutate, isError, error, isPending} = useUploadTrack()
+  const { mutateAsync, isPending} = useUploadTrack()
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setError,
+    formState: {errors}
+  } = useForm<UploadTrackFormInputs>({
+    resolver: zodResolver(schema)
+  })
 
-    const form = e.currentTarget
-    const formData = new FormData(form)
-    const values = Object.fromEntries(formData.entries())
-
-    mutate(values as any, {
-      onSuccess: () => {
-        form.reset()
+  const myHandleSubmit: SubmitHandler<UploadTrackFormInputs> = async (inputs) => {
+    try {
+      const file = inputs.file[0]
+      if(!file) {
+        setError('file', { message: 'File is required' })
+        return
       }
-    })
-
-    console.log('submit')
+      await mutateAsync({...inputs, file})
+      reset()
+    } catch {
+      setError('file', {
+        message: 'Title and File is required'
+      })
+    }
   }
+
   return (
-    <form onSubmit={handleSubmit}>
-      {/*isIdle: {isIdle ? 'true' : 'false'}*/}
-      {/*isPending: {isPending ? 'true' : 'false'}*/}
-      {isError && <div style={{color: 'red'}}>{JSON.stringify(error)}</div>}
+    <form onSubmit={handleSubmit(myHandleSubmit)}>
       <div>
         <input
-          type="text"
-          name={'title'}
+          {...register('title', {required: true})}
         />
+        {errors.title && <span>{errors.title.message}</span>}
       </div>
       <div>
         <input
-          type="file"
-          name={'file'}
+          type={"file"}
+          {...register('file')}
         />
+        {errors.file?.message && <span>{String(errors.file.message)}</span>}
       </div>
       <div>
         <button disabled={isPending} type={"submit"}>Upload</button>
