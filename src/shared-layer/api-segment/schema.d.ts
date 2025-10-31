@@ -355,7 +355,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Create a track with MP3 file upload */
+        /** Create a track with MP3 file upload. Allowed file extensions: mp3, max size: 1 MB */
         post: operations["TracksController_uploadTrackMp3"];
         delete?: never;
         options?: never;

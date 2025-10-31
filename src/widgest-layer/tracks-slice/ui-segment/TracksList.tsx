@@ -3,7 +3,7 @@ import {type ChangeEvent, useRef, useState} from "react";
 import s from '../../../TraksList.module.css'
 import {
   useTracksQuery
-} from "@/widgest-layer/tracks-slice/model-segment/useTracksQuery.tsx";
+} from "@/widgest-layer/tracks-slice/model-segment/useTracksQuery.ts";
 import {Search} from "@/shared-layer/ui-segment/Search.tsx";
 import {Pagination} from "@/shared-layer/ui-segment/Pagination.tsx";
 
