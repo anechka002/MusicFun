@@ -3,6 +3,7 @@ import {
 } from "@/widgest-layer/playlists-slice/model-segment/usePlaylists.ts";
 import noCover from '@/assets/no-cover.png'
 import type {
+  components,
   SchemaPlaylistListItemResource
 } from "@/shared-layer/api-segment/schema";
 
@@ -21,19 +22,21 @@ export const PlaylistsList = ({userId}: Props) => {
       PlaylistsList {userId}
       <div>{data?.data.map(pl => <div key={pl.id}>
             <h4>{pl.attributes.title}</h4>
-            <PlaylistCover playlist={pl}/>
+            <PlaylistCover images={pl.attributes.images} playlistCoverTitle={pl.attributes.title} />
           </div>)}
       </div>
     </div>
   );
 };
 
-const PlaylistCover = ({playlist}: {playlist: SchemaPlaylistListItemResource}) => {
+type PlaylistImagesOutputDTO = components["schemas"]["PlaylistImagesOutputDTO"];
+
+const PlaylistCover = ({images, playlistCoverTitle}: {images: PlaylistImagesOutputDTO, playlistCoverTitle: string}) => {
   let url = noCover;
-  if(playlist.attributes.images.main?.length) {
-    url = playlist.attributes.images.main[0]!.url
+  if(images.main?.length) {
+    url = images.main[0]!.url
   }
   return (
-   <img src={url} alt={'cover'} style={{ width: '200px'}} />
+   <img src={url} alt={playlistCoverTitle} style={{ width: '200px'}} />
   )
 }
