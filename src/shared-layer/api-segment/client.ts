@@ -14,8 +14,20 @@ const myMiddleware: Middleware = {
     }
     return request;
   },
+  async onResponse({response})  {
+    if(!response.ok) {
+      const responseBody = await response.json()
+      throw new APIError(response, responseBody)
+    }
+  }
 };
 
 client.use(myMiddleware)
 
 // const encoded = btoa('anechka002:MasteR!123')
+
+class APIError extends Error {
+  constructor(public response: Response, public body: any) {
+    super(`${response.url} ${response.status} ${response.statusText}`);
+  }
+}

@@ -6,9 +6,6 @@ export const useMeQuery = () => {
     queryKey: ['auth', 'me'],
     queryFn: async () => {
       const wrapper = await client.GET('/auth/me')
-      if(wrapper.error) {
-        throw wrapper.error;
-      }
       return wrapper.data
     },
     retry: false

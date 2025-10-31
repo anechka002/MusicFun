@@ -19,9 +19,6 @@ export const useUploadTrack = () => {
         }
       })
 
-      if(wrapper.error) {
-        throw wrapper.error
-      }
       return wrapper.data
     },
     onSuccess: () => {

@@ -8,9 +8,6 @@ export const useLoginMutation = () => {
     mutationFn: async({login, password}: {login: string, password: string}) => {
       storage.saveBasicCredentials(login, password)
       const wrapper = await client.GET('/auth/me')
-      if(wrapper.error) {
-        throw wrapper.error
-      }
       return wrapper.data
     },
     onError: () => {
