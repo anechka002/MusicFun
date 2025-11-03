@@ -13,9 +13,9 @@ export const useDeleteTrack = () => {
         },
       })
 
-      if(wrapper.error) {
-        throw wrapper.error
-      }
+      // if(wrapper.error) {
+      //   throw wrapper.error
+      // }
       return wrapper.data
     },
     onSuccess: () => {

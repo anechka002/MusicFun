@@ -4,7 +4,7 @@ import type {SchemaGetTracksRequestPayload} from "@/shared-layer/api-segment/sch
 
 export function useTracksQuery(params: Partial<SchemaGetTracksRequestPayload>) {
   return useQuery({
-    queryKey: ['tracksList', {params}],
+    queryKey: ['tracksList', params],
     queryFn: async () => {
       const clientData = await client.GET('/playlists/tracks', {
         params: {

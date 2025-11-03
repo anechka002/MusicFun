@@ -4,7 +4,7 @@ import {CommonLayout} from "@/routing/layouts/CommonLayout.tsx";
 import {PageNotFound} from "@/pages-layer/pageNotFound/PageNotFound.tsx";
 import {LoginPage} from "@/pages-layer/loginPage/LoginPage.tsx";
 import {RegisterPage} from "@/pages-layer/registerPage/RegisterPage.tsx";
-import {ProfilePage} from "@/pages-layer/profilePage/ProfilePage.tsx";
+import {ProfilePage} from "@/pages-layer/profilePage";
 import {
   TrackDetailPage
 } from "@/pages-layer/trackDetailPage/TrackDetailPage.tsx";
