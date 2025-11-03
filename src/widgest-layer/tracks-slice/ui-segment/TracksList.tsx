@@ -6,31 +6,10 @@ import {
 } from "@/widgest-layer/tracks-slice/model-segment/useTracksQuery.ts";
 import {Search} from "@/shared-layer/ui-segment/Search.tsx";
 import {Pagination} from "@/shared-layer/ui-segment/Pagination.tsx";
+import {usePagination} from "@/shared-layer/utils/hooks/usePagination.ts";
 
 type SortDirectionType =  "desc" | "asc" | undefined
 type SortByType =  "publishedAt"| "likesCount"
-
-// 🧩 Кастомный хук для управления пагинацией
-const usePagination = () => {
-  // 🔢 Номер текущей страницы (для пагинации)
-  const [pageNumber, setPageNumber] = useState<number>(1);
-  // 📏 Количество треков на странице
-  const [pageSize, setPageSize] = useState<number>(5);
-
-  return {
-    pageNumber,
-    pageSize,
-    // Устанавливает новую страницу
-    setPageNumber: (newPageNumber: number) => {
-      setPageNumber(newPageNumber);
-    },
-    // Меняет количество элементов на странице и сбрасывает страницу на первую
-    setPageSize: (newPageSize: number) => {
-      setPageSize(newPageSize);
-      setPageNumber(1)
-    },
-  }
-}
 
 type Props = {
   userId?: string;
@@ -129,9 +108,9 @@ export const TracksList = ({userId, includeDrafts}: Props) => {
   };
 
   // 📄 Изменение текущей страницы (при клике на номер страницы)
-  const handlePageSelect = (pageNumber: number) => {
-    setPageNumber(pageNumber)
-  }
+  // const handlePageSelect = (pageNumber: number) => {
+  //   setPageNumber(pageNumber)
+  // }
 
   // ⚙️ Флаг: контент устарел (React Query обновляет данные)
   // true → контент устарел, идёт обновление (например, пользователь переключил страницу)
@@ -140,7 +119,7 @@ export const TracksList = ({userId, includeDrafts}: Props) => {
 
   // ⏳ Флаг: страница в процессе обновления (например, при смене страницы)
   // true → контент подгружается (для блокировки кнопок пагинации и визуальных эффектов)
-  const isPageUpdating = isFetching && !isPending
+  // const isPageUpdating = isFetching && !isPending
 
   // 🔢 Изменение количества элементов на странице
   const handlePageSizeChange = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -189,8 +168,10 @@ export const TracksList = ({userId, includeDrafts}: Props) => {
       <Pagination total={tracks.meta.totalCount!}
                   skip={tracks.meta.pageSize * (pageNumber - 1)}
                   limit={tracks.meta.pageSize}
-                  onPageSelect={handlePageSelect}
-                  isPageUpdating={isPageUpdating}
+                  // onPageSelect={handlePageSelect}
+                  onPageSelect={setPageNumber}
+                  // isPageUpdating={isPageUpdating}
+                  isPageUpdating={isFetching && !isPending}
       />
 
       <ul style={{ opacity: isPageContentUnactual ? '0.4' : '1' }}>
