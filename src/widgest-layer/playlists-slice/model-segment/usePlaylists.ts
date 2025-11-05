@@ -3,8 +3,11 @@ import {client} from "@/shared-layer/api-segment/client.ts";
 import type {
   SchemaGetPlaylistsRequestPayload
 } from "@/shared-layer/api-segment/schema";
+import type {Strict} from "@/shared-layer/utils/types/strict.ts";
 
-export const usePlaylists = (params: Partial<SchemaGetPlaylistsRequestPayload>) => {
+type PlaylistsParams = Partial<SchemaGetPlaylistsRequestPayload>
+
+export function usePlaylists<P extends PlaylistsParams> (params: Strict<PlaylistsParams, P>) {
   return useQuery({
     queryKey: ['playlists', 'list', params],
     queryFn: async () => {

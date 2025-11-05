@@ -1,4 +1,3 @@
-import {Track} from '../../../Track.tsx';
 import {type ChangeEvent, useRef, useState} from "react";
 import s from '../../../TraksList.module.css'
 import {
@@ -7,6 +6,7 @@ import {
 import {Search} from "@/shared-layer/ui-segment/Search.tsx";
 import {Pagination} from "@/shared-layer/ui-segment/Pagination.tsx";
 import {usePagination} from "@/shared-layer/utils/hooks/usePagination.ts";
+import {Track} from "@/Track.tsx";
 
 type SortDirectionType =  "desc" | "asc" | undefined
 type SortByType =  "publishedAt"| "likesCount"

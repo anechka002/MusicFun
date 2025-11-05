@@ -1,8 +1,11 @@
 import {keepPreviousData, useQuery} from "@tanstack/react-query";
 import {client} from "@/shared-layer/api-segment/client.ts";
 import type {SchemaGetTracksRequestPayload} from "@/shared-layer/api-segment/schema";
+import type {Strict} from "@/shared-layer/utils/types/strict.ts";
 
-export function useTracksQuery(params: Partial<SchemaGetTracksRequestPayload>) {
+type TracksParams = Partial<SchemaGetTracksRequestPayload>
+
+export function useTracksQuery<P extends TracksParams>(params: Strict<TracksParams, P>) {
   return useQuery({
     queryKey: ['tracksList', params],
     queryFn: async () => {

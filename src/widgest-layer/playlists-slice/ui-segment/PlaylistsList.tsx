@@ -12,7 +12,7 @@ type Props = {
 }
 
 export const PlaylistsList = ({userId}: Props) => {
-  const {pageNumber, pageSize, setPageSize, setPageNumber } = usePagination()
+  const {pageNumber, pageSize, setPageNumber } = usePagination()
 
   const {data, isFetching, isPending, isError} = usePlaylists({
     userId,
